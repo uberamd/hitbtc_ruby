@@ -102,8 +102,7 @@ module Hitbtc
     end
 
     def cancel_order client_order_id
-        delete_private 'order/'+client_order_id
-      end
+      delete_private 'order/'+client_order_id
     end
 
     def trade_history opts={}
