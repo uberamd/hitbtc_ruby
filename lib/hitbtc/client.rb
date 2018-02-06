@@ -150,7 +150,7 @@ module Hitbtc
       r = self.class.post(url, {headers: headers, body: post_data}).parsed_response
       Hashie::Mash.new(r)
     end
-
+    
     def get_private(method, opts={})
       opts = complete_opts(opts)
       uri = "/api/"+ @api_version + method +"?" + encode_options(opts)
@@ -194,7 +194,7 @@ module Hitbtc
     end
 
     def generate_message(uri, data)
-        uri + data
+      uri + data
     end
 
     def generate_hmac(key, message)
@@ -215,11 +215,11 @@ module Hitbtc
 end
 
 class Hashie::Mash
-    def try key
-       if self.key?(key.to_s)
-         self[key]
-       else
-         self
-       end
+  def try key
+    if self.key?(key.to_s)
+      self[key]
+    else
+      self
     end
+  end
 end
