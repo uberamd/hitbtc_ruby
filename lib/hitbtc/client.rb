@@ -11,7 +11,7 @@ module Hitbtc
     def initialize(api_key=nil, api_secret=nil, options={})
       @api_key      = api_key || YAML.load_file("key.yml")["key"]
       @api_secret   = api_secret || YAML.load_file("key.yml")["secret"]
-      @api_version  = options[:version] ||= '1'
+      @api_version  = options[:version] ||= '2'
       @base_uri     = options[:base_uri] ||= 'api.hitbtc.com'
     end
 
