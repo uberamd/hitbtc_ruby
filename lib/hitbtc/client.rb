@@ -1,5 +1,4 @@
 require 'httparty'
-require 'hashie'
 require 'base64'
 require 'addressable/uri'
 
@@ -19,16 +18,8 @@ module Hitbtc
     ###### Public Data ########
     ###########################
 
-    def symbols(opts={}) #can specify array of string symbols
-      mash = get_public 'symbol'
-      m = mash.try(:symbol)
-      if (opts.length == 1 || opts.class == String) && m != mash
-        m.select{|h| opts.include?(h.symbol)}.first
-      elsif !opts.empty? && m != mash
-        m.select{|h| opts.include?(h.symbol)}
-      else
-        m
-      end
+    def symbols
+        get_public 'symbol'
     end
 
     def ticker symbol
@@ -71,34 +62,21 @@ module Hitbtc
     def get_public(method, opts={})
       url = 'https://'+ @base_uri + '/api/' + @api_version + '/public/' + method
       r = self.class.get(url, query: opts)
-      Hashie::Mash.new(JSON.parse(r.body))
+      JSON.parse(r.body)
     end
 
     ######################
     ##### Private Data ###
     ######################
 
-    def balance opts={} #array of string currency
-      mash = get_private 'trading/balance'
-      m = mash.try(:balance)
-      if opts.class == String
-        o = []
-        o << opts
-        opts = o
-      end
-      if m != mash && opts.length > 0
-        r= m.select{|c| opts.include?(c.currency_code)}
-        (r.length==1 ? r.first : r)
-      else
-        m
-      end
+    def balance #array of string currency
+      get_private 'trading/balance'
     end
 
     def active_orders opts={}
       #opts parameter
       #symbol (string): Optional parameter to filter active orders by symbol
-      mash = get_private 'order', opts
-      mash.try(:orders)
+      get_private 'order', opts
     end
 
     def cancel_order client_order_id
@@ -106,13 +84,11 @@ module Hitbtc
     end
 
     def trade_history opts={}
-      mash= get_private 'history/trades', opts
-      mash.try(:trades)
+      get_private 'history/trades', opts
     end
 
     def recent_orders opts={}
-      mash = get_private 'history/order', opts
-      mash.try(:orders)
+      get_private 'history/order', opts
     end
 
     def create_order opts={}
@@ -147,7 +123,7 @@ module Hitbtc
       url = "https://" + @base_uri + uri
 
       r = self.class.post(url, {basic_auth: {username: @api_key, password: @api_secret}, body: post_data}).parsed_response
-      Hashie::Mash.new(r)
+      r
     end
 
     def get_private(method, opts={})
@@ -156,7 +132,7 @@ module Hitbtc
       url = "https://" + @base_uri + uri
 
       r = self.class.get(url, basic_auth: {username: @api_key, password: @api_secret})
-      mash = Hashie::Mash.new(JSON.parse(r.body))
+      JSON.parse(r.body)
     end
 
     def delete_private(method, opts={})
@@ -165,7 +141,7 @@ module Hitbtc
       url = "https://" + @base_uri + uri
 
       r = self.class.delete(url, basic_auth: {username: @api_key, password: @api_secret}).parsed_response
-      Hashie::Mash.new(r)
+      r
     end
 
     def complete_opts opts
@@ -182,40 +158,6 @@ module Hitbtc
       uri = Addressable::URI.new
       uri.query_values = opts
       uri.query
-    end
-
-    def generate_signature(uri, post_data)
-      message = generate_message(uri, post_data)
-      generate_hmac(@api_secret, message)
-    end
-
-    def generate_message(uri, data)
-      uri + data
-    end
-
-    def generate_hmac(key, message)
-      OpenSSL::HMAC.hexdigest('SHA512', key, message).downcase
-    end
-
-    def random_string
-
-    end
-
-    ##################################
-    ##### Realtime with web socket ###
-    ##################################
-
-    # to be written
-
-  end
-end
-
-class Hashie::Mash
-  def try key
-    if self.key?(key.to_s)
-      self[key]
-    else
-      self
     end
   end
 end
