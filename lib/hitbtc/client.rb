@@ -143,11 +143,10 @@ module Hitbtc
 
     def post_private(method, opts={})
       post_data = encode_options(opts)
-      uri = "/api/"+ @api_version + "/" + method +"?" + "apikey=" + @api_key + "&nonce=" + nonce
+      uri = "/api/"+ @api_version + "/" + method
       url = "https://" + @base_uri + uri
-      signature = generate_signature(uri, post_data)
-      headers = {'X-Signature' => signature}
-      r = self.class.post(url, {headers: headers, body: post_data}).parsed_response
+
+      r = self.class.post(url, {basic_auth: {username: @api_key, password: @api_secret}, body: post_data}).parsed_response
       Hashie::Mash.new(r)
     end
 
@@ -155,20 +154,17 @@ module Hitbtc
       opts = complete_opts(opts)
       uri = "/api/"+ @api_version + "/" + method +"?" + encode_options(opts)
       url = "https://" + @base_uri + uri
-      signature = generate_signature(uri, "")
-      headers = {'X-Signature' => signature}
 
-      r = self.class.get(url, {headers: headers})
+      r = self.class.get(url, basic_auth: {username: @api_key, password: @api_secret})
       mash = Hashie::Mash.new(JSON.parse(r.body))
     end
 
     def delete_private(method, opts={})
       post_data = encode_options(opts)
-      uri = "/api/"+ @api_version + "/" + method +"?" + "apikey=" + @api_key + "&nonce=" + nonce
+      uri = "/api/"+ @api_version + "/" + method
       url = "https://" + @base_uri + uri
-      signature = generate_signature(uri, post_data)
-      headers = {'X-Signature' => signature}
-      r = self.class.delete(url, {headers: headers, body: post_data}).parsed_response
+
+      r = self.class.delete(url, basic_auth: {username: @api_key, password: @api_secret}).parsed_response
       Hashie::Mash.new(r)
     end
 
