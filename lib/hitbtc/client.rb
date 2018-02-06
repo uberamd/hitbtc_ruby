@@ -143,17 +143,17 @@ module Hitbtc
 
     def post_private(method, opts={})
       post_data = encode_options(opts)
-      uri = "/api/"+ @api_version + method +"?" + "apikey=" + @api_key + "&nonce=" + nonce
+      uri = "/api/"+ @api_version + "/" + method +"?" + "apikey=" + @api_key + "&nonce=" + nonce
       url = "https://" + @base_uri + uri
       signature = generate_signature(uri, post_data)
       headers = {'X-Signature' => signature}
       r = self.class.post(url, {headers: headers, body: post_data}).parsed_response
       Hashie::Mash.new(r)
     end
-    
+
     def get_private(method, opts={})
       opts = complete_opts(opts)
-      uri = "/api/"+ @api_version + method +"?" + encode_options(opts)
+      uri = "/api/"+ @api_version + "/" + method +"?" + encode_options(opts)
       url = "https://" + @base_uri + uri
       signature = generate_signature(uri, "")
       headers = {'X-Signature' => signature}
@@ -164,7 +164,7 @@ module Hitbtc
 
     def delete_private(method, opts={})
       post_data = encode_options(opts)
-      uri = "/api/"+ @api_version + method +"?" + "apikey=" + @api_key + "&nonce=" + nonce
+      uri = "/api/"+ @api_version + "/" + method +"?" + "apikey=" + @api_key + "&nonce=" + nonce
       url = "https://" + @base_uri + uri
       signature = generate_signature(uri, post_data)
       headers = {'X-Signature' => signature}
