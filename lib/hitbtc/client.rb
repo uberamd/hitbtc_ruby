@@ -102,7 +102,7 @@ module Hitbtc
       # stopPrice	       (Number):	Required for stop types.
       # expireTime	   (Datetime):	Required for GTD timeInForce.
       # strictValidate	(Boolean):	Price and quantity will be checked that they increment within tick size and quantity step. See symbol tickSize and quantityIncrement
-      post_private 'new_order', opts
+      post_private 'order', opts
     end
     ######################
     ##### Payment Data ###
