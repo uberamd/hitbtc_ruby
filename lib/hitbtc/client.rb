@@ -159,14 +159,5 @@ module Hitbtc
       uri.query_values = opts
       uri.query
     end
-
-
-
-    ##################################
-    ##### Realtime with web socket ###
-    ##################################
-
-    # to be written
-
   end
 end
